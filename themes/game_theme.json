@@ -1,0 +1,11 @@
+{
+    "button":
+    {
+        "font":
+        {
+            "name": "electrolize",
+            "size": "24",
+            "regular_path": "fonts/Electrolize-Regular.ttf"
+        }
+    }
+}
