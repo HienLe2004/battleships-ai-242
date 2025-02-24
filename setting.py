@@ -5,4 +5,4 @@ MAX_MAIN_SCREEN_HEIGHT = 600
 MAX_MAIN_SCREEN_WIDTH = 1000
 nb_of_rows = 0
 nb_of_cols = 0
-max_ship_len = 0
+nb_of_ships = []

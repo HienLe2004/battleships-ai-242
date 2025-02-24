@@ -7,10 +7,10 @@ import time
 import tracemalloc
 
 class Game:
-    def __init__(self, row, col, max_len):
+    def __init__(self, row, col, nb_of_ships):
         self.ROW = row
         self.COL = col
-        self.MAX_SHIP_LEN = max_len
+        self.nb_of_ships = nb_of_ships
         self.CELL_SIZE = min(MAX_MAIN_SCREEN_HEIGHT//row, MAX_MAIN_SCREEN_WIDTH//col)
         self.SCREEN_WIDTH_OFFSET = 300
         self.MAIN_SCREEN_WIDTH = self.CELL_SIZE * (col + 1) + self.SCREEN_WIDTH_OFFSET
@@ -61,7 +61,7 @@ class Game:
                         grid_data = self.grid.original_grid_data
                     start_time = time.time()  # Lấy thời gian bắt đầu
                     tracemalloc.start() # Bắt đầu theo dõi
-                    gb = GameBoard.create_from_game_input(grid_data, self.MAX_SHIP_LEN, self.grid.get_cols_data(), self.grid.get_rows_data())
+                    gb = GameBoard.create_from_game_input(grid_data, self.nb_of_ships, self.grid.get_cols_data(), self.grid.get_rows_data())
                     btsg = BattleshipGame(gb)
                     goalNode = breadth_first_tree_search(btsg)
                     current, peak = tracemalloc.get_traced_memory() # Lấy thông tin bộ nhớ
@@ -88,7 +88,7 @@ class Game:
                         grid_data = self.grid.original_grid_data
                     start_time = time.time()  # Lấy thời gian bắt đầu
                     tracemalloc.start() # Bắt đầu theo dõi
-                    gb = GameBoard.create_from_game_input(grid_data, self.MAX_SHIP_LEN, self.grid.get_cols_data(), self.grid.get_rows_data())
+                    gb = GameBoard.create_from_game_input(grid_data, self.nb_of_ships, self.grid.get_cols_data(), self.grid.get_rows_data())
                     btsg = BattleshipGame(gb)
                     goalNode = depth_first_tree_search(btsg)
                     current, peak = tracemalloc.get_traced_memory() # Lấy thông tin bộ nhớ
@@ -115,7 +115,7 @@ class Game:
                         grid_data = self.grid.original_grid_data
                     start_time = time.time()  # Lấy thời gian bắt đầu
                     tracemalloc.start() # Bắt đầu theo dõi
-                    gb = GameBoard.create_from_game_input(grid_data, self.MAX_SHIP_LEN, self.grid.get_cols_data(), self.grid.get_rows_data())
+                    gb = GameBoard.create_from_game_input(grid_data, self.nb_of_ships, self.grid.get_cols_data(), self.grid.get_rows_data())
                     btsg = BattleshipGame(gb)
                     goalNode = astar_search(btsg)
                     current, peak = tracemalloc.get_traced_memory() # Lấy thông tin bộ nhớ
@@ -130,7 +130,7 @@ class Game:
                     self.grid.set_transformed_grid_data(goalNode.state.board.grid)
 
     def draw(self):
-        self.screen.fill((250,250,250))
+        self.screen.fill((200,200,200))
         self.grid.draw()
         if self.is_solved:
             self.show_result()
