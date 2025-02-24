@@ -1,5 +1,6 @@
 from collections import deque
 from utils import *
+import setting
 class Problem:
     def __init__(self, initial, goal=None):
         self.initial = initial
@@ -70,25 +71,33 @@ class Node:
     def __hash__(self):
         return hash(self.state)
 
-def breadth_first_tree_search(problem):
+def breadth_first_tree_search(problem, game=None):
     frontier = deque([Node(problem.initial)])
     while frontier:
         node = frontier.popleft()
+        setting.current_state += 1
+        if game != None:
+            game.grid.set_transformed_grid_data(node.state.board.grid)
+            game.draw_every_states()
         if problem.goal_test(node.state):
             return node
         frontier.extend(node.expand(problem))
     return None
 
-def depth_first_tree_search(problem):
+def depth_first_tree_search(problem, game=None):
     frontier = [Node(problem.initial)]
     while frontier:
         node = frontier.pop()
+        setting.current_state += 1
+        if game != None:
+            game.grid.set_transformed_grid_data(node.state.board.grid)
+            game.draw_every_states()
         if problem.goal_test(node.state):
             return node
         frontier.extend(node.expand(problem))
     return None
 
-def best_first_graph_search(problem, f, display=False):
+def best_first_graph_search(problem, game, f, display=False):
     f = memoize(f, "f")
     node = Node(problem.initial)
     frontier = PriorityQueue("min", f)
@@ -96,6 +105,10 @@ def best_first_graph_search(problem, f, display=False):
     explored = set()
     while frontier:
         node = frontier.pop()
+        setting.current_state += 1
+        if game != None:
+            game.grid.set_transformed_grid_data(node.state.board.grid)
+            game.draw_every_states()
         if problem.goal_test(node.state):
             if display:
                 print(
@@ -115,6 +128,6 @@ def best_first_graph_search(problem, f, display=False):
                     frontier.append(child)
     return None
 
-def astar_search(problem, h=None, display=False):
+def astar_search(problem, game = None, h=None, display=False):
     h = memoize(h or problem.h, "h")
-    return best_first_graph_search(problem, lambda n: n.path_cost + h(n), display)
+    return best_first_graph_search(problem, game, lambda n: n.path_cost + h(n), display)

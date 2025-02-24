@@ -1,8 +1,10 @@
 from setting import *
+import setting
 import pygame_gui
 from cell import *
 from grid import *
 from battleships import *
+from checkbox import *
 import time
 import tracemalloc
 
@@ -66,6 +68,7 @@ class Game:
         self.confirm_reset_button = pygame_gui.elements.UIButton(relative_rect=reset_button_rect, text="Reset", 
                                                                manager=self.manager,
                                                                object_id="#confirm_reset_btn")
+        self.checkbox = Checkbox(self.screen, (self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 20, 280), (20,20))
     def input(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -88,7 +91,10 @@ class Game:
                     tracemalloc.start() # Bắt đầu theo dõi
                     gb = GameBoard.create_from_game_input(grid_data, self.nb_of_ships, self.grid.get_cols_data(), self.grid.get_rows_data())
                     btsg = BattleshipGame(gb)
-                    goalNode = breadth_first_tree_search(btsg)
+                    if self.checkbox.is_checked:
+                        goalNode = breadth_first_tree_search(btsg, self)  
+                    else:
+                        goalNode = breadth_first_tree_search(btsg)
                     current, peak = tracemalloc.get_traced_memory() # Lấy thông tin bộ nhớ
                     end_time = time.time()  # Lấy thời gian kết thúc
                     execution_time = end_time - start_time  # Thời gian thực thi
@@ -115,7 +121,10 @@ class Game:
                     tracemalloc.start() # Bắt đầu theo dõi
                     gb = GameBoard.create_from_game_input(grid_data, self.nb_of_ships, self.grid.get_cols_data(), self.grid.get_rows_data())
                     btsg = BattleshipGame(gb)
-                    goalNode = depth_first_tree_search(btsg)
+                    if self.checkbox.is_checked:
+                        goalNode = depth_first_tree_search(btsg, self)
+                    else:
+                        goalNode = depth_first_tree_search(btsg)
                     current, peak = tracemalloc.get_traced_memory() # Lấy thông tin bộ nhớ
                     end_time = time.time()  # Lấy thời gian kết thúc
                     execution_time = end_time - start_time  # Thời gian thực thi
@@ -142,7 +151,10 @@ class Game:
                     tracemalloc.start() # Bắt đầu theo dõi
                     gb = GameBoard.create_from_game_input(grid_data, self.nb_of_ships, self.grid.get_cols_data(), self.grid.get_rows_data())
                     btsg = BattleshipGame(gb)
-                    goalNode = astar_search(btsg)
+                    if self.checkbox.is_checked:
+                        goalNode = astar_search(btsg, game = self)
+                    else:
+                        goalNode = astar_search(btsg)
                     current, peak = tracemalloc.get_traced_memory() # Lấy thông tin bộ nhớ
                     end_time = time.time()  # Lấy thời gian kết thúc
                     execution_time = end_time - start_time  # Thời gian thực thi
@@ -156,29 +168,54 @@ class Game:
                 elif event.ui_element == self.confirm_row_button:
                     row_input = self.row_input.get_text().split(' ')
                     row_input = [int(i) for i in row_input]
+                    while (len(row_input) < self.ROW):
+                        row_input.append(0)
+                    while (len(row_input) > self.ROW):
+                        row_input.pop()
                     self.grid.set_rows_data(row_input)
                 elif event.ui_element == self.confirm_col_button:
                     col_input = self.col_input.get_text().split(' ')
                     col_input = [int(i) for i in col_input]
+                    while (len(col_input) < self.COL):
+                        col_input.append(0)
+                    while (len(col_input) > self.COL):
+                        col_input.pop()
                     self.grid.set_cols_data(col_input)
                 elif event.ui_element == self.confirm_reset_button:
                     self.grid.reset_grid()
                     self.is_solved = False
+                    setting.current_state = 0
 
     def draw(self):
         self.screen.fill((200,200,200))
         self.grid.draw()
         if self.is_solved:
             self.show_result()
+        self.checkbox.draw()
+        #show current state
+        font = pygame.font.Font('fonts/Electrolize-Regular.ttf', 16)
+        text = font.render(f"State #{setting.current_state}", True, (10,10,10))
+        text_rect = text.get_frect(bottomleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 10, 550))
+        self.screen.blit(text, text_rect)
+
+    def draw_every_states(self):
+        self.screen.fill((200,200,200))
+        self.grid.draw()
+        #show current state
+        font = pygame.font.Font('fonts/Electrolize-Regular.ttf', 16)
+        text = font.render(f"State #{setting.current_state}", True, (10,10,10))
+        text_rect = text.get_frect(bottomleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 10, 550))
+        self.screen.blit(text, text_rect)
+        pygame.display.update()
 
     def show_result(self):
         font = pygame.font.Font('fonts/Electrolize-Regular.ttf', 16)
         text_1 = font.render(f"Execution time: {self.execution_time:.4f} s", True, (20,20,20))
         text_2 = font.render(f"Current cap: {self.current_capacity / 1024:.2f} KB", True, (20,20,20))
         text_3 = font.render(f"Peak cap: {self.peak_capacity / 1024:.2f} KB", True, (20,20,20))
-        text_rect_1 = text_1.get_frect(topleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 10, 280))
-        text_rect_2 = text_2.get_frect(topleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 10, 310))
-        text_rect_3 = text_3.get_frect(topleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 10, 340))
+        text_rect_1 = text_1.get_frect(topleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 10, 380))
+        text_rect_2 = text_2.get_frect(topleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 10, 410))
+        text_rect_3 = text_3.get_frect(topleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 10, 440))
         self.screen.blit(text_1, text_rect_1)
         self.screen.blit(text_2, text_rect_2)
         self.screen.blit(text_3, text_rect_3)
@@ -186,6 +223,7 @@ class Game:
     def update(self):
         self.input()
         self.grid.update()
+        self.checkbox.update()
 
     def run(self):
         while self.running:
