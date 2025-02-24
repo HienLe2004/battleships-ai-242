@@ -41,6 +41,26 @@ class Game:
         self.heuristic_button = pygame_gui.elements.UIButton(relative_rect=heuristic_btn_rect, text="Heuristic", 
                                                        manager=self.manager,
                                                        object_id="#heuristic_btn")
+        row_rect_surf = pygame.Surface((150,50))
+        row_rect = row_rect_surf.get_rect(topleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 110, 160))
+        self.row_input = pygame_gui.elements.UITextEntryLine(relative_rect=row_rect,
+                                                             manager=self.manager, object_id="#row_input",
+                                                             initial_text=" ".join(["0"] * self.ROW))
+        row_button_surf = pygame.Surface((100,50))
+        row_button_rect = row_button_surf.get_rect(topleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 10, 160))
+        self.confirm_row_button = pygame_gui.elements.UIButton(relative_rect=row_button_rect, text="row", 
+                                                               manager=self.manager,
+                                                               object_id="#confirm_row_btn")
+        col_rect_surf = pygame.Surface((150,50))
+        col_rect = col_rect_surf.get_rect(topleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 110, 210))
+        self.col_input = pygame_gui.elements.UITextEntryLine(relative_rect=col_rect,
+                                                             manager=self.manager, object_id="#col_input",
+                                                             initial_text=" ".join(["0"] * self.COL))
+        col_button_surf = pygame.Surface((100,50))
+        col_button_rect = col_button_surf.get_rect(topleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 10, 210))
+        self.confirm_col_button = pygame_gui.elements.UIButton(relative_rect=col_button_rect, text="column", 
+                                                               manager=self.manager,
+                                                               object_id="#confirm_col_btn")
     def input(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -128,6 +148,14 @@ class Game:
                     print("Output grid:")
                     print(goalNode.state.board)
                     self.grid.set_transformed_grid_data(goalNode.state.board.grid)
+                elif event.ui_element == self.confirm_row_button:
+                    row_input = self.row_input.get_text().split(' ')
+                    row_input = [int(i) for i in row_input]
+                    self.grid.set_rows_data(row_input)
+                elif event.ui_element == self.confirm_col_button:
+                    col_input = self.col_input.get_text().split(' ')
+                    col_input = [int(i) for i in col_input]
+                    self.grid.set_cols_data(col_input)
 
     def draw(self):
         self.screen.fill((200,200,200))
@@ -140,9 +168,9 @@ class Game:
         text_1 = font.render(f"Execution time: {self.execution_time:.4f} s", True, (20,20,20))
         text_2 = font.render(f"Current cap: {self.current_capacity / 1024:.2f} KB", True, (20,20,20))
         text_3 = font.render(f"Peak cap: {self.peak_capacity / 1024:.2f} KB", True, (20,20,20))
-        text_rect_1 = text_1.get_frect(topleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 10, 180))
-        text_rect_2 = text_2.get_frect(topleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 10, 210))
-        text_rect_3 = text_3.get_frect(topleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 10, 240))
+        text_rect_1 = text_1.get_frect(topleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 10, 280))
+        text_rect_2 = text_2.get_frect(topleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 10, 310))
+        text_rect_3 = text_3.get_frect(topleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 10, 340))
         self.screen.blit(text_1, text_rect_1)
         self.screen.blit(text_2, text_rect_2)
         self.screen.blit(text_3, text_rect_3)

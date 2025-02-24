@@ -137,6 +137,13 @@ class Grid:
     def get_rows_data(self):
         return [cell.value for cell in self.count_per_row]
 
+    def set_cols_data(self, cols):
+        for i in range(self.grid_size[1]):
+            self.count_per_col[i].value = cols[i]
+    def set_rows_data(self, rows):
+        for i in range(self.grid_size[1]):
+            self.count_per_row[i].value = rows[i]
+
     def draw(self):
         self.grid_surf.fill((250, 250, 250))
         for row in self.cells:

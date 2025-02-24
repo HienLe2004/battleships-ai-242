@@ -1,1 +1,1 @@
-print(f"{row} {col} {max_len}")
+setting_theme
