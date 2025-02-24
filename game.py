@@ -61,6 +61,11 @@ class Game:
         self.confirm_col_button = pygame_gui.elements.UIButton(relative_rect=col_button_rect, text="column", 
                                                                manager=self.manager,
                                                                object_id="#confirm_col_btn")
+        reset_button_surf = pygame.Surface((100,50))
+        reset_button_rect = reset_button_surf.get_rect(bottomleft=(self.MAIN_SCREEN_WIDTH - self.SCREEN_WIDTH_OFFSET + 10, self.MAIN_SCREEN_HEIGH))
+        self.confirm_reset_button = pygame_gui.elements.UIButton(relative_rect=reset_button_rect, text="Reset", 
+                                                               manager=self.manager,
+                                                               object_id="#confirm_reset_btn")
     def input(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -71,14 +76,14 @@ class Game:
                     self.is_solved = False
                     print("Solving by BFS algorithm...")
                     print("Input grid:")
-                    grid_data = self.grid.get_tranformed_grid_data()
+                    grid_data = self.grid.get_transformed_grid_data()
                     for row in grid_data:
                         print(row)
-                    if self.grid.first_solve:
-                        self.grid.first_solve = False
-                        self.grid.original_grid_data = grid_data
-                    else:
-                        grid_data = self.grid.original_grid_data
+                    # if self.grid.first_solve:
+                    #     self.grid.first_solve = False
+                    #     self.grid.original_grid_data = grid_data
+                    # else:
+                    #     grid_data = self.grid.original_grid_data
                     start_time = time.time()  # Lấy thời gian bắt đầu
                     tracemalloc.start() # Bắt đầu theo dõi
                     gb = GameBoard.create_from_game_input(grid_data, self.nb_of_ships, self.grid.get_cols_data(), self.grid.get_rows_data())
@@ -98,14 +103,14 @@ class Game:
                     self.is_solved = False
                     print("Solving by DFS algorithm...")
                     print("Input grid:")
-                    grid_data = self.grid.get_tranformed_grid_data()
+                    grid_data = self.grid.get_transformed_grid_data()
                     for row in grid_data:
                         print(row)
-                    if self.grid.first_solve:
-                        self.grid.first_solve = False
-                        self.grid.original_grid_data = grid_data
-                    else:
-                        grid_data = self.grid.original_grid_data
+                    # if self.grid.first_solve:
+                    #     self.grid.first_solve = False
+                    #     self.grid.original_grid_data = grid_data
+                    # else:
+                    #     grid_data = self.grid.original_grid_data
                     start_time = time.time()  # Lấy thời gian bắt đầu
                     tracemalloc.start() # Bắt đầu theo dõi
                     gb = GameBoard.create_from_game_input(grid_data, self.nb_of_ships, self.grid.get_cols_data(), self.grid.get_rows_data())
@@ -125,14 +130,14 @@ class Game:
                     self.is_solved = False
                     print("Solving by A* algorithm...")
                     print("Input grid:")
-                    grid_data = self.grid.get_tranformed_grid_data()
+                    grid_data = self.grid.get_transformed_grid_data()
                     for row in grid_data:
                         print(row)
-                    if self.grid.first_solve:
-                        self.grid.first_solve = False
-                        self.grid.original_grid_data = grid_data
-                    else:
-                        grid_data = self.grid.original_grid_data
+                    # if self.grid.first_solve:
+                    #     self.grid.first_solve = False
+                    #     self.grid.original_grid_data = grid_data
+                    # else:
+                    #     grid_data = self.grid.original_grid_data
                     start_time = time.time()  # Lấy thời gian bắt đầu
                     tracemalloc.start() # Bắt đầu theo dõi
                     gb = GameBoard.create_from_game_input(grid_data, self.nb_of_ships, self.grid.get_cols_data(), self.grid.get_rows_data())
@@ -156,6 +161,9 @@ class Game:
                     col_input = self.col_input.get_text().split(' ')
                     col_input = [int(i) for i in col_input]
                     self.grid.set_cols_data(col_input)
+                elif event.ui_element == self.confirm_reset_button:
+                    self.grid.reset_grid()
+                    self.is_solved = False
 
     def draw(self):
         self.screen.fill((200,200,200))

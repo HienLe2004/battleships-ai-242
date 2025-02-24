@@ -102,11 +102,9 @@ class Grid:
                     elif value == 'c':
                         self.cells[row][col].direction = Ship_Part_Direction.CIRCLE
                 
-                
-
     def get_grid_data(self):
         return [[cell.type.value for cell in row] for row in self.cells]
-    def get_tranformed_grid_data(self):
+    def get_transformed_grid_data(self):
         new_grid = []
         for row in range(self.grid_size[0]):
             cells_in_row = []
@@ -143,7 +141,13 @@ class Grid:
     def set_rows_data(self, rows):
         for i in range(self.grid_size[1]):
             self.count_per_row[i].value = rows[i]
-
+    def reset_grid(self):
+        self.set_cols_data([0] * self.grid_size[1])
+        self.set_rows_data([0] * self.grid_size[0])
+        for row in self.cells:
+            for cell in row:
+                cell.is_fixed = False
+                cell.type = Cell_Type.EMPTY 
     def draw(self):
         self.grid_surf.fill((250, 250, 250))
         for row in self.cells:
