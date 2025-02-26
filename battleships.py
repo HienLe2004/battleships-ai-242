@@ -3,7 +3,6 @@ from search import *
 import time
 import tracemalloc
 tracemalloc.start()
-
 row_constraints, col_constraints = (), ()  # Lưu trữ số lượng phần tàu cần có trong mỗi hàng và cột.
 ship_parts = ("t", "b", "l", "r", "c", "m", "x")  # Các giá trị đại diện cho các phần của tàu
 water_symbols = ("w", ".")  # Các giá trị đại diện cho nước
@@ -17,7 +16,7 @@ direction_vectors = {
 }  # Các vector định hướng của tàu
 
 class GameBoard:
-    def __init__(self, grid):
+    def __init__(self, grid, use_simplify=True):
         self.grid = grid
         self.size = len(grid)
         self.is_invalid = False
@@ -26,6 +25,7 @@ class GameBoard:
         self.col_ship_counts = [0] * self.size
         self.row_water_counts = [0] * self.size
         self.col_water_counts = [0] * self.size
+        self.use_simplify = use_simplify
 
     def get_cell_value(self, row: int, col: int):
         if 0 <= row < self.size and 0 <= col < self.size:
@@ -82,7 +82,7 @@ class GameBoard:
         self.set_cell_value(row + 1, col - 1, bottom_left)
 
     @staticmethod
-    def create_from_input():
+    def create_from_input(use_simplify=True):
         global row_constraints, col_constraints
         row_info = stdin.readline().strip("\n")
         col_info = stdin.readline().strip("\n")
@@ -90,7 +90,7 @@ class GameBoard:
         col_constraints = tuple(map(int, col_info.split("\t")[1:]))
         board_size = len(row_constraints)
         grid = [["?" for _ in range(board_size)] for _ in range(board_size)]
-        board = GameBoard(grid)
+        board = GameBoard(grid, use_simplify)
         boats_info = stdin.readline().strip("\n")
         board.ship_counts = list(map(int, boats_info.split("\t")[1:]))
         hint_count = int(stdin.readline())
@@ -105,7 +105,7 @@ class GameBoard:
                 if board.get_cell_value(row, col) in ("t", "l", "c"):
                     board.check_ship_completion(row, col)
         return board.simplify_board()
-    
+        
     @staticmethod
     def create_from_game_input(cells, nb_of_ships, count_per_col, count_per_row):
         global row_constraints, col_constraints
@@ -127,8 +127,10 @@ class GameBoard:
                 if board.get_cell_value(row, col) in ("t", "l", "c"):
                     board.check_ship_completion(row, col)
         return board.simplify_board()
-
+    
     def simplify_board(self):
+        if not self.use_simplify:
+            return self
         changed = True
         while changed:
             changed = False
@@ -165,6 +167,7 @@ class GameBoard:
             for col in range(self.size):
                 if self.get_cell_value(row, col) == "x":
                     self.identify_ship_part(row, col)
+
         return self
 
     def check_ship_isolation(self, row: int, col: int, part_type: str):
@@ -382,9 +385,10 @@ class GameState:
         return self.id < other.id
 
 class BattleshipGame(Problem):
-    def __init__(self, board: GameBoard):
+    def __init__(self, board: GameBoard, use_simplify=True):
         state = GameState(board)
         super().__init__(state)
+        self.use_simplify = use_simplify
 
     def actions(self, state: GameState):
         if state.board.is_invalid or sum(state.board.ship_counts) == 0:
@@ -412,15 +416,18 @@ class BattleshipGame(Problem):
 
 if __name__ == "__main__":
     start_time = time.time()
+    # use_simplify = True
+    use_simplify = False # (khi dung bfs, dfs)
     gb = GameBoard.create_from_input()
-    btsg = BattleshipGame(gb)
+    btsg = BattleshipGame(gb, use_simplify)
+    # goalNode = astar_search(btsg)
+    goalNode = breadth_first_tree_search(btsg)
     # goalNode = depth_first_tree_search(btsg)
-    goalNode = best_first_graph_search()
     end_time = time.time()
     print(f"T: {end_time - start_time:.4f} s")
     current, peak = tracemalloc.get_traced_memory()
-    print(f"current: {current / 10**6} MB")
-    print(f"peak: {peak / 10**6} MB")
+    print(f"current: {current / 2**20} MB")
+    print(f"peak: {peak / 2**20} MB")
     
     tracemalloc.stop()
     
