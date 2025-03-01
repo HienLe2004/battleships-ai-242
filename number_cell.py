@@ -26,7 +26,6 @@ class Number_Cell:
         text = font.render(str(self.value), True, (10,10,10))
         text_rect = text.get_frect(center=self.position).move(0, int(self.size[0]*0.08))
         self.grid.grid_surf.blit(text, text_rect)
-           
-    
+            
     def update(self):
         self.input()

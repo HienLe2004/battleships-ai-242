@@ -82,14 +82,9 @@ class Game:
                     grid_data = self.grid.get_transformed_grid_data()
                     for row in grid_data:
                         print(row)
-                    # if self.grid.first_solve:
-                    #     self.grid.first_solve = False
-                    #     self.grid.original_grid_data = grid_data
-                    # else:
-                    #     grid_data = self.grid.original_grid_data
                     start_time = time.time()  # Lấy thời gian bắt đầu
                     tracemalloc.start() # Bắt đầu theo dõi
-                    gb = GameBoard.create_from_game_input(grid_data, self.nb_of_ships, self.grid.get_cols_data(), self.grid.get_rows_data())
+                    gb = GameBoard.create_from_game_input(grid_data, self.nb_of_ships, self.grid.get_cols_data(), self.grid.get_rows_data(), False)
                     btsg = BattleshipGame(gb)
                     if self.checkbox.is_checked:
                         goalNode = breadth_first_tree_search(btsg, self)  
@@ -112,14 +107,9 @@ class Game:
                     grid_data = self.grid.get_transformed_grid_data()
                     for row in grid_data:
                         print(row)
-                    # if self.grid.first_solve:
-                    #     self.grid.first_solve = False
-                    #     self.grid.original_grid_data = grid_data
-                    # else:
-                    #     grid_data = self.grid.original_grid_data
                     start_time = time.time()  # Lấy thời gian bắt đầu
                     tracemalloc.start() # Bắt đầu theo dõi
-                    gb = GameBoard.create_from_game_input(grid_data, self.nb_of_ships, self.grid.get_cols_data(), self.grid.get_rows_data())
+                    gb = GameBoard.create_from_game_input(grid_data, self.nb_of_ships, self.grid.get_cols_data(), self.grid.get_rows_data(), False)
                     btsg = BattleshipGame(gb)
                     if self.checkbox.is_checked:
                         goalNode = depth_first_tree_search(btsg, self)
@@ -142,14 +132,9 @@ class Game:
                     grid_data = self.grid.get_transformed_grid_data()
                     for row in grid_data:
                         print(row)
-                    # if self.grid.first_solve:
-                    #     self.grid.first_solve = False
-                    #     self.grid.original_grid_data = grid_data
-                    # else:
-                    #     grid_data = self.grid.original_grid_data
                     start_time = time.time()  # Lấy thời gian bắt đầu
                     tracemalloc.start() # Bắt đầu theo dõi
-                    gb = GameBoard.create_from_game_input(grid_data, self.nb_of_ships, self.grid.get_cols_data(), self.grid.get_rows_data())
+                    gb = GameBoard.create_from_game_input(grid_data, self.nb_of_ships, self.grid.get_cols_data(), self.grid.get_rows_data(), True)
                     btsg = BattleshipGame(gb)
                     if self.checkbox.is_checked:
                         goalNode = astar_search(btsg, game = self)

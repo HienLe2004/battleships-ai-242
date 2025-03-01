@@ -107,12 +107,12 @@ class GameBoard:
         return board.simplify_board()
         
     @staticmethod
-    def create_from_game_input(cells, nb_of_ships, count_per_col, count_per_row):
+    def create_from_game_input(cells, nb_of_ships, count_per_col, count_per_row, use_simplify=True):
         global row_constraints, col_constraints
         row_constraints = tuple(i for i in count_per_row)
         col_constraints = tuple(i for i in count_per_col)
         grid = [["?" for _ in row] for row in cells]
-        board = GameBoard(grid)
+        board = GameBoard(grid, use_simplify)
         board.ship_counts = [0]
         for i in range(len(nb_of_ships)):
             board.ship_counts.append(nb_of_ships[i])

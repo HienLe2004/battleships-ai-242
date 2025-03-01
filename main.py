@@ -1,6 +1,5 @@
 from setting import *
 from game import *
-import time
 import pygame_gui
 
 class Setting:
